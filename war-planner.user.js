@@ -5,7 +5,7 @@
 // @description  Provides an option to share missions, to allow for a better planning of galaxy-wide operations
 // @author       Drakehinst
 // @grant        none
-// @updateURL	 
+// @updateURL	 https://github.com/Drakehinst/Asylamba-War-Planner/raw/master/war-planner.user.js
 // @require      http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
 // @include      http://game.asylamba.com/*/map
 // ==/UserScript==
