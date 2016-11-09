@@ -45,7 +45,7 @@ function setupInterface()
     addCss('#map-option { height: 108px; max-width: 186px; background-repeat: initial;}');
     addCss('#map-option a { margin-top: 1px; margin-bottom: 4px;}'); // ADDIG
     // create the buttons
-    var button_show_campaign = $('<a href="#" class="sh hb lb" id="toggle-shared-missions" title="Afficher les missions partagées"></a>');
+    var button_show_campaign = $('<a href="#" class="sh hb lb" id="toggle-shared-missions" title="Afficher les missions partagÃ©es"></a>');
     button_show_campaign.append('<img src="http://imgur.com/odWzhog.png?1" alt="show_campaigns">');
     button_show_campaign.click(toggleSharedMissions);
     //button_show_campaign.click(databaseReset);
@@ -55,10 +55,9 @@ function setupInterface()
     $('#action-box').on("click", function()
     {
         button_mission_launch = $('#action-box li.active+li div.commander-tile div.move a');
-        //button_mission_launch.on("mouseenter", {debug: bool_debug_on}, getMissionData); // TODO: on release, change "mouseenter" to "click"
         button_mission_launch.on("mouseenter", function() // TODO: on release, change "mouseenter" to "click"
         {
-            pushNewMission(getMissionData());
+            pushNewMission(getMissionData($(this)));
         });
     });
     // SETUP SHARED MISSIONS DISPLAY
@@ -87,7 +86,6 @@ function setupInterface()
     {
         var focused_system_x = $(this).attr('style').match(/left: [0-9]+/)[0].replace(/left: /, "") * 1 + 10;
         var focused_system_y = $(this).attr('style').match(/top: [0-9]+/)[0].replace(/top: /, "") * 1 + 10;
-        //console.log("focused system coords: " + focused_system_x + ", " + focused_system_y);
         getMissionsFromCoordinates(focused_system_x, focused_system_y);
     });
     $('#shared-missions').after('<div id="shared-missions-info"></div>');
@@ -117,18 +115,18 @@ function toggleSharedMissions()
  * @param {bool_debug_on} activate/deactivate debug log
  * @return {mission} A mission object containing all mission parameters (type, time, localizations, fleet)
  */
-function getMissionData()
+function getMissionData(target_object)
 {
     // Initialize blank mission
     var mission =
     {
-        "type": "unknown", // "Pillage", "Colonisation" or "Conquête"
+        "type": "unknown", // "Pillage", "Colonisation" or "ConquÃªte"
         "source_player": "unknown", // Player's pseudonyme
         "source_planet_name": "unknown", // Player's currently seleted planet name
         "source_planet_x": 0, // planet center x coordinate on canvas
         "source_planet_y": 0, // planet center y coordinate on canvas
         "target_player": "unknown", // Opponent's pseudonyme or "Rebelle"
-        "target_planet_name": "unknown", // Opponent's planet name or "Planète rebelle"
+        "target_planet_name": "unknown", // Opponent's planet name or "PlanÃ¨te rebelle"
         "target_planet_x": 0, // planet center x coordinate on canvas
         "target_planet_y": 0, // planet center y coordinate on canvas
         "duration": 0, // string of format "hh:mm:ss"
@@ -136,17 +134,17 @@ function getMissionData()
         "time_arrived": 0, // launch time + duration
         "fleet_rank_commander": 0, // max pev == rank * 100
         "fleet_pev": 0, // total pev assigned to fleet
-        "fleet_ships": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] // fleet composition [Pégase, Satyre, Chimère, Sirène, Dryade, Méduse, Griffon, Cyclope, Minotaure, Hydre, Cerbère, Phénix]
+        "fleet_ships": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] // fleet composition [PÃ©gase, Satyre, ChimÃ¨re, SirÃ¨ne, Dryade, MÃ©duse, Griffon, Cyclope, Minotaure, Hydre, CerbÃ¨re, PhÃ©nix]
     };
     // Scrap data from current page
-    var launch_button_text = $('#action-box li.active+li div.commander-tile div.move a.button').html();
+    var launch_button_text = target_object.html();
     if (launch_button_text.includes("colonisation"))
     {
         mission.type = "Colonisation";
     }
-    else if (launch_button_text.includes("conquête"))
+    else if (launch_button_text.includes("conquÃªte"))
     {
-        mission.type = "Conquête";
+        mission.type = "ConquÃªte";
     }
     else
     {
@@ -217,7 +215,7 @@ function pushNewMission(new_mission)
             case "Colonisation":
                 data.colonizations.push(new_mission);
                 break;
-            case "Conquête":
+            case "ConquÃªte":
                 data.conquests.push(new_mission);
                 break;
             default:
@@ -268,7 +266,7 @@ function updateSharedMissions()
                 case "Colonisation":
                     svg_colonizations.append(new_svg_line);
                     break;
-                case "Conquête":
+                case "ConquÃªte":
                     svg_conquests.append(new_svg_line);
                     break;
                 default:
@@ -305,7 +303,7 @@ function getMissionsFromCoordinates(system_x, system_y)
                 $('#' + system_id).css("border-collapse", "collapse");
                 $('#' + system_id).css("top", system_y);
                 $('#' + system_id).css("left", system_x);
-                $('#' + system_id).append('<thead><tr><th>Attaquant</th><th>Cible</th><th>Arrivée</th></tr></thead>');
+                $('#' + system_id).append('<thead><tr><th>Attaquant</th><th>Cible</th><th>ArrivÃ©e</th></tr></thead>');
             }
             $('#' + system_id + ' tbody').empty();
             $.each(system_missions, function(index, value)
