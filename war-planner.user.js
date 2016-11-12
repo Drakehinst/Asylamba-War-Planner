@@ -62,6 +62,7 @@ function setupInterface()
     });
     // SETUP SHARED MISSIONS DISPLAY
     $('#map').append('<div id="shared-missions"><div class="plunderings"></div><div class="colonizations"></div><div class="conquests"></div></div>');
+    $('#shared-missions').css('visibility', 'hidden');
     var svg_shared_plunderings = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg_shared_plunderings.setAttribute('viewBox', "0, 0, 5000, 5000");
     svg_shared_plunderings.setAttribute('xmlns', "http://www.w3.org/2000/svg");
@@ -89,7 +90,7 @@ function setupInterface()
         getMissionsFromCoordinates(focused_system_x, focused_system_y);
     });
     $('#shared-missions').after('<div id="shared-missions-info"></div>');
-    $('#shared-missions-info').attr("id", "shared-missions-info");
+    $('#shared-missions-info').css('visibility', 'hidden');
     addCss('#shared-missions-info table th,td { padding: 5px;}');
 }
 
