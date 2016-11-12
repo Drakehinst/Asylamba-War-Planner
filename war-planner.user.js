@@ -8,7 +8,6 @@
 // @updateURL	 https://github.com/Drakehinst/Asylamba-War-Planner/raw/master/war-planner.user.js
 // @require      http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
 // @include      http://game.asylamba.com/*/map
-// @include      http://game.asylamba.com/*/map*
 // ==/UserScript==
 
 // ADDIG means it should be this way in the game (some script might have modified it previously, or it's originally bad)
@@ -63,25 +62,24 @@ function setupInterface()
     });
     // SETUP SHARED MISSIONS DISPLAY
     $('#map').append('<div id="shared-missions"></div>');
-    $('#map').append('<div id="shared-missions"><div class="plunderings"></div><div class="colonizations"></div><div class="conquests"></div></div>');
     var svg_shared_plunderings = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg_shared_plunderings.setAttribute('viewBox', "0, 0, 5000, 5000");
     svg_shared_plunderings.setAttribute('xmlns', "http://www.w3.org/2000/svg");
     svg_shared_plunderings.setAttribute('class', "plunderings");
-    $('#shared-missions div.plunderings').append(svg_shared_plunderings);
+    $('#shared-missions').append(svg_shared_plunderings);
     var svg_shared_colonizations = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg_shared_colonizations.setAttribute('viewBox', "0, 0, 5000, 5000");
     svg_shared_colonizations.setAttribute('xmlns', "http://www.w3.org/2000/svg");
     svg_shared_colonizations.setAttribute('class', "colonizations");
-    $('#shared-missions div.colonizations').append(svg_shared_colonizations);
+    $('#shared-missions').append(svg_shared_colonizations);
     var svg_shared_conquests = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg_shared_conquests.setAttribute('viewBox', "0, 0, 5000, 5000");
     svg_shared_conquests.setAttribute('xmlns', "http://www.w3.org/2000/svg");
     svg_shared_conquests.setAttribute('class', "conquests");
-    $('#shared-missions div.conquests').append(svg_shared_conquests);
-    addCss('#shared-missions div.plunderings svg line {stroke: rgb(0,255,255); stroke-width: 1px;}'); // transform-origin: 0px 0px 0px;
-    addCss('#shared-missions div.colonizations svg line {stroke: rgb(255,255,0); stroke-width: 1px;}');
-    addCss('#shared-missions div.conquests svg line {stroke: rgb(255,0,255); stroke-width: 1px;}');
+    $('#shared-missions').append(svg_shared_conquests);
+    addCss('#shared-missions svg.plunderings line {stroke: rgb(0,255,255); stroke-width: 1px;}'); // transform-origin: 0px 0px 0px;
+    addCss('#shared-colonizations svg.colonizations line {stroke: rgb(255,255,0); stroke-width: 1px;}');
+    addCss('#shared-conquests svg.conquests line {stroke: rgb(255,0,255); stroke-width: 1px;}');
     updateSharedMissions();
     // SETUP SYSTEM ONGOING MISSIONS DISPLAY
     $('#systems a').on('mouseover', function(event)
@@ -105,12 +103,10 @@ function toggleSharedMissions()
     if (bool_show_campaign)
     {
         $('#shared-missions').css('visibility', 'visible');
-        $('#shared-missions-info').css('visibility', 'visible');
     }
     else
     {
         $('#shared-missions').css('visibility', 'hidden');
-        $('#shared-missions-info').css('visibility', 'hidden');
     }
 }
 
@@ -248,12 +244,12 @@ function updateSharedMissions()
 {
     // reset the display
     $('#shared-missions svg').empty();
-    var svg_plunderings = $('#shared-missions div.plunderings svg');
-    var svg_colonizations = $('#shared-missions div.colonizations svg');
-    var svg_conquests = $('#shared-missions div.conquests svg');
+    var svg_plunderings = $('#shared-missions svg.plunderings');
+    var svg_colonizations = $('#shared-missions svg.colonizations');
+    var svg_conquests = $('#shared-missions svg.conquests');
     $.get(bdd_url, function(data, status) {
         var new_svg_line = "";
-        // for each plundering entry, add a line to the right SVG div
+        // for each entry, add a line to the SVG div
         for (i = 0; i < data.plunderings.length; i++)
         {
             new_svg_line = document.createElementNS('http://www.w3.org/2000/svg', "line");
@@ -261,29 +257,23 @@ function updateSharedMissions()
             new_svg_line.setAttribute('x2', data.plunderings[i].target_planet_x);
             new_svg_line.setAttribute('y1', data.plunderings[i].source_planet_y);
             new_svg_line.setAttribute('y2', data.plunderings[i].target_planet_y);
-            svg_plunderings.append(new_svg_line);
+            // add the mission to the right category
+            switch (data.plunderings[i].type)
+            {
+                case "Pillage":
+                    svg_plunderings.append(new_svg_line);
+                    break;
+                case "Colonisation":
+                    svg_colonizations.append(new_svg_line);
+                    break;
+                case "Conquête":
+                    svg_conquests.append(new_svg_line);
+                    break;
+                default:
+                    svg_plunderings.append(new_svg_line);
+                    break;
+            }
         }
-        // for each colonization entry, add a line to the right SVG div
-        for (i = 0; i < data.colonizations.length; i++)
-        {
-            new_svg_line = document.createElementNS('http://www.w3.org/2000/svg', "line");
-            new_svg_line.setAttribute('x1', data.colonizations[i].source_planet_x);
-            new_svg_line.setAttribute('x2', data.colonizations[i].target_planet_x);
-            new_svg_line.setAttribute('y1', data.colonizations[i].source_planet_y);
-            new_svg_line.setAttribute('y2', data.colonizations[i].target_planet_y);
-            svg_colonizations.append(new_svg_line);
-        }
-        // for each conquest entry, add a line to the right SVG div
-        for (i = 0; i < data.conquests.length; i++)
-        {
-            new_svg_line = document.createElementNS('http://www.w3.org/2000/svg', "line");
-            new_svg_line.setAttribute('x1', data.conquests[i].source_planet_x);
-            new_svg_line.setAttribute('x2', data.conquests[i].target_planet_x);
-            new_svg_line.setAttribute('y1', data.conquests[i].source_planet_y);
-            new_svg_line.setAttribute('y2', data.conquests[i].target_planet_y);
-            svg_conquests.append(new_svg_line);
-        }
-        console.log(">>> Display successfuly updated!");
     });
 }
 
